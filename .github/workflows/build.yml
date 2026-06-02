@@ -18,27 +18,30 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: gradle
 
-    - name: Initialize Android Project
+    - name: Scaffold Full Android Project Architecture
       run: |
+        # 1. Force establish standard Android structures
         mkdir -p app/src/main/res/layout
         mkdir -p app/src/main/java/com/example/webwrapper
         
-        # Move files to standard Android layout if they are in root
-        [ -f AndroidManifest.xml ] && mv AndroidManifest.xml app/src/main/ || true
-        [ -f main.xml ] && mv main.xml app/src/main/res/layout/activity_main.xml || true
-        [ -f activity_main.xml ] && mv activity_main.xml app/src/main/res/layout/ || true
-        [ -f MainActivity.java ] && mv MainActivity.java app/src/main/java/com/example/webwrapper/ || true
+        # 2. Safely relocate structural assets
+        [ -f AndroidManifest.xml ] && cp AndroidManifest.xml app/src/main/AndroidManifest.xml || true
+        [ -f activity_main.xml ] && cp activity_main.xml app/src/main/res/layout/activity_main.xml || true
+        [ -f MainActivity.java ] && cp MainActivity.java app/src/main/java/com/example/webwrapper/MainActivity.java || true
 
-        # Build minimalist configuration files needed for a quick build
+        # 3. Inject critical project-level gradle configuration
         echo "include ':app'" > settings.gradle
         
         echo "buildscript {
             repositories { google(); mavenCentral() }
             dependencies { classpath 'com.android.tools.build:gradle:8.2.2' }
+        }
+        allprojects {
+            repositories { google(); mavenCentral() }
         }" > build.gradle
 
+        # 4. Inject application-level dependencies and SDK configuration
         echo "plugins {
             id 'com.android.application'
         }
@@ -52,15 +55,23 @@ jobs:
                 versionCode 1
                 versionName '1.0'
             }
+            buildTypes {
+                release {
+                    minifyEnabled false
+                }
+            }
         }" > app/build.gradle
 
-    - name: Setup Gradle
+        # 5. Generate pristine local settings configurations
+        echo "sdk.dir=/usr/local/lib/android/sdk" > local.properties
+
+    - name: Setup Gradle System
       run: gradle wrapper --gradle-version 8.5
 
-    - name: Build Debug APK
+    - name: Run Production Compilation
       run: ./gradlew assembleDebug
 
-    - name: Upload Finished APK
+    - name: Archive and Export Package
       uses: actions/upload-artifact@v4
       with:
         name: WebWrapper-APK
