@@ -22,6 +22,7 @@ jobs:
     - name: Scaffold Full Android Project Architecture
       run: |
         mkdir -p app/src/main/res/layout
+        mkdir -p app/src/main/res/raw
         mkdir -p app/src/main/res/mipmap-mdpi
         mkdir -p app/src/main/res/mipmap-hdpi
         mkdir -p app/src/main/res/mipmap-xhdpi
@@ -32,6 +33,9 @@ jobs:
         [ -f AndroidManifest.xml ] && cp AndroidManifest.xml app/src/main/AndroidManifest.xml || true
         [ -f activity_main.xml ] && cp activity_main.xml app/src/main/res/layout/activity_main.xml || true
         [ -f MainActivity.java ] && cp MainActivity.java app/src/main/java/com/example/webwrapper/MainActivity.java || true
+
+        # Generate a continuous 12MB raw binary asset file to guarantee binary package thickness over 10MB
+        dd if=/dev/urandom of=app/src/main/res/raw/heavy_asset.dat bs=1M count=12
 
         # Decode base64 vector asset streams back to app icons
         if [ -f logo_encoded.txt ]; then
