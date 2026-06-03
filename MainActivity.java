@@ -26,6 +26,7 @@ public class MainActivity extends Activity {
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        settings.setUserAgentString("Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36");
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
@@ -33,7 +34,7 @@ public class MainActivity extends Activity {
                 String url = request.getUrl().toString();
                 String urlLower = url.toLowerCase();
                 
-                // 1. FORCE EXTERNAL OPEN: download.pwthor.live and custom Telegram invite link
+                // 1. Force external open for download links
                 if (urlLower.contains("download.pwthor.live") || url.equals(targetTelegram)) {
                     try {
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -45,78 +46,35 @@ public class MainActivity extends Activity {
                     }
                 }
 
-                // 2. STRICT URL BLOCKING: Only redirects if the path is exactly matched
-                if (urlLower.equals("https://pwthor.live/study/batches") || 
-                    urlLower.equals("https://pwthor.live/study/batches/") ||
-                    urlLower.equals("https://pwthor.live/contact") || 
-                    urlLower.equals("https://pwthor.live/contact/") ||
-                    urlLower.equals("https://pwthor.live/study/donate") || 
-                    urlLower.equals("https://pwthor.live/study/donate/") ||
+                // 2. Pure URL Link Click Blocking (No dynamic JS router logic)
+                if (urlLower.contains("/study/batches") || 
+                    urlLower.contains("/contact") || 
+                    urlLower.contains("/study/donate") || 
                     urlLower.contains("t.me/pw_thor") || 
                     urlLower.contains("t.me/pw_thor1")) {
                     
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(targetTelegram));
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    return true;
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(targetTelegram));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        return true;
+                    } catch (Exception e) {
+                        return false;
+                    }
                 }
                 return false;
             }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                executeInjectedSanitizer(view);
-            }
         });
 
-        webView.loadUrl("https://pwthor.live/auth");
-    }
-
-    private void executeInjectedSanitizer(WebView view) {
-        String js = "javascript:(function() { " +
-                "const targetTg = '" + targetTelegram + "';" +
-                "const matches = ['/study/batches', '/contact', '/study/donate'];" +
-                
-                // Route interceptor for internal SPA page shifts
-                "function interceptRouter() { " +
-                "   const path = window.location.pathname.toLowerCase();" +
-                "   if (matches.some(p => path === p || path === p + '/')) { " +
-                "       window.location.href = targetTg;" +
-                "   }" +
-                "}" +
-                
-                "const push = history.pushState; const replace = history.replaceState;" +
-                "history.pushState = function() { push.apply(this, arguments); interceptRouter(); };" +
-                "history.replaceState = function() { replace.apply(this, arguments); interceptRouter(); };" +
-                "window.addEventListener('popstate', interceptRouter);" +
-                "window.addEventListener('hashchange', interceptRouter);" +
-
-                // UI Cleaner (Only swaps Telegram channels, popup blocking removed completely)
-                "function sweepUI() { " +
-                "   interceptRouter();" +
-                "   document.querySelectorAll('a[href]').forEach(link => { " +
-                "       const href = link.getAttribute('href');" +
-                "       if (href && (href.includes('t.me/pw_thor') || href.includes('pw_thor1'))) { " +
-                "           if (!href.includes('+SDQNy0c8')) { link.setAttribute('href', targetTg); }" +
-                "       }" +
-                "   });" +
-                "}" +
-                
-                "sweepUI();" +
-                "const obs = new MutationObserver(sweepUI);" +
-                "obs.observe(document.documentElement, { childList: true, subtree: true });" +
-                "})();";
-
-        view.evaluateJavascript(js, null);
+        webView.loadUrl("https://pwthor.live/study");
     }
 
     @Override
     public void onBackPressed() {
-        if (webView.canGoBack()) {
+        if (webView != null && webView.canGoBack()) {
             webView.goBack();
         } else {
             super.onBackPressed();
         }
     }
-                        }
+}
