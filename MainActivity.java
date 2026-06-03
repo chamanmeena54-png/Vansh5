@@ -15,7 +15,7 @@ public class MainActivity extends Activity {
     private final String targetTelegram = "https://t.me/+SDQNy0c8-p1iNDBl";
 
     @Override
-    protected void BundlesavedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
         webView = new WebView(this);
@@ -68,7 +68,6 @@ public class MainActivity extends Activity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                // Sirf tabhi JS run karega jab asli home url khul chuka hoga, loop nahi banega
                 if (!url.equals(targetTelegram)) {
                     executeInjectedSanitizer(view);
                 }
@@ -85,7 +84,6 @@ public class MainActivity extends Activity {
                 
                 "function interceptRouter() { " +
                 "   const path = window.location.pathname.toLowerCase();" +
-                "   // Ekdum safe verification taaki home path '/' ya '/study' block na ho\n" +
                 "   if (path !== '/' && path !== '/study' && matches.some(p => path === p || path === p + '/')) { " +
                 "       window.location.href = targetTg;" +
                 "   }" +
@@ -123,4 +121,4 @@ public class MainActivity extends Activity {
             super.onBackPressed();
         }
     }
-}
+                }
