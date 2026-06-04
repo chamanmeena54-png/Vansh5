@@ -14,8 +14,10 @@ public class MainActivity extends Activity {
 
     private WebView webView;
     private final String targetTelegram = "https://t.me/+SDQNy0c8-p1iNDBl";
-    // PERMANENT HOME URL
+    
+    // PERFECT PERMANENT HOME URL Set Here
     private final String homeUrl = "https://pwthor.live/study/batches/6a0ae06d427dcbb4d1b4e73f";
+    
     private Handler urlCheckHandler = new Handler();
     private Runnable urlCheckRunnable;
 
@@ -41,7 +43,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        // Background loop checking url every 500ms
+        // Background real-time listener (Checks Next.js state shifts every 500ms)
         urlCheckRunnable = new Runnable() {
             @Override
             public void run() {
@@ -56,14 +58,14 @@ public class MainActivity extends Activity {
         };
         urlCheckHandler.postDelayed(urlCheckRunnable, 500);
 
-        // Directly open your specific batch URL permanently
+        // App opens directly to your requested specific batch page permanently
         webView.loadUrl(homeUrl);
     }
 
     private boolean checkAndRedirect(String url) {
         String urlLower = url.toLowerCase();
         
-        // Allowed External Links
+        // Force System External Launch for Allowed Links
         if (urlLower.contains("download.pwthor.live") || url.equals(targetTelegram)) {
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -75,19 +77,20 @@ public class MainActivity extends Activity {
             }
         }
 
-        // Check if user is navigating to the exact main batches list page
+        // Verification condition to check if the exact main batches path is opened
         boolean isMainBatchesPage = urlLower.endsWith("/study/batches") || urlLower.endsWith("/study/batches/");
 
-        // STRICT PERMANENT BLOCK LIST (Specific batch page is completely safe and excluded)
+        // STRICT PERMANENT BLOCK MATRIX (Specific batch path is completely safe)
         if (urlLower.contains("t.me/pw_thor") || urlLower.contains("t.me/pw_thor1") ||
             urlLower.contains("/contact") || urlLower.contains("/study/donate") ||
             isMainBatchesPage) {
             
             try {
                 webView.stopLoading();
-                webView.loadUrl("https://pwthor.live/study"); // Redirect inside app to fallback zone
+                // If user hits blocked page, fallback instantly to your custom home batch link
+                webView.loadUrl(homeUrl); 
                 
-                // Force bounce to your Telegram channel
+                // Instantly redirect to Telegram
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(targetTelegram));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
@@ -115,4 +118,4 @@ public class MainActivity extends Activity {
             moveTaskToBack(true);
         }
     }
-                }
+}
