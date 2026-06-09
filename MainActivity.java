@@ -13,10 +13,10 @@ import android.webkit.WebViewClient;
 public class MainActivity extends Activity {
 
     private WebView webView;
-    private final String targetTelegram = "https://t.me/+SDQNy0c8-p1iNDBl";
+    private final String targetTelegram = "https://t.me/+bngr6b7kuyQ5YWE1";
     
     // PERFECT PERMANENT HOME URL Set Here
-    private final String homeUrl = "https://studystark.com/#batches";
+    private final String homeUrl = "https://pwthor.live/study";
     
     private Handler urlCheckHandler = new Handler();
     private Runnable urlCheckRunnable;
@@ -78,10 +78,10 @@ public class MainActivity extends Activity {
         }
 
         // Verification condition to check if the exact main batches path is opened
-        boolean isMainBatchesPage = urlLower.endsWith("/study/batches") || urlLower.endsWith("/study/batches/");
+        boolean isMainBatchesPage = urlLower.endsWith("/batches") || urlLower.endsWith("/batches/");
 
         // STRICT PERMANENT BLOCK MATRIX (Specific batch path is completely safe)
-        if (urlLower.contains("t.me/studystark") || urlLower.contains("telegram.me/studystark") ||
+        if (urlLower.contains("t.me/pwthor1") || urlLower.contains("telegram.me/pw_thor") ||
             urlLower.contains("/ct") || urlLower.contains("/e") ||
             isMainBatchesPage) {
             
