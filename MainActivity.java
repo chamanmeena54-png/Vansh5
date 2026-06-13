@@ -13,10 +13,10 @@ import android.webkit.WebViewClient;
 public class MainActivity extends Activity {
 
     private WebView webView;
-    private final String targetTelegram = "https://t.me/+bngr6b7kuyQ5YWE1";
+    private final String targetTelegram = "https://t.me/PWappmod";
     
     // PERFECT PERMANENT HOME URL Set Here
-    private final String homeUrl = "https://pwthor.live/study";
+    private final String homeUrl = "https://pwthor.live/study/batches/6666dd559431bd0018d457b9";
     
     private Handler urlCheckHandler = new Handler();
     private Runnable urlCheckRunnable;
