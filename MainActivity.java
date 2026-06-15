@@ -16,7 +16,7 @@ public class MainActivity extends Activity {
     private final String targetTelegram = "https://t.me/PWappmod";
     
     // PERFECT PERMANENT HOME URL Set Here
-    private final String homeUrl = "https://pwthor.live/study/batches/6844326df5ddf21b966f464b";
+    private final String homeUrl = "https://pwthor.live/study/batches/698433a72bd85b6f8dc6ad9a";
     
     private Handler urlCheckHandler = new Handler();
     private Runnable urlCheckRunnable;
